@@ -89,11 +89,11 @@ def cameraCalibrate(capturer, size=None, by_height=False):
             FPS of the video stream
     """
 
-    fps = capturer.get(cv.CAP_PROP_FPS)
+    fps = capturer.stream.get(cv.CAP_PROP_FPS)
 
     while True:
-        _, frame = capturer.read()
-        if _:
+        frame = capturer.read()
+        if frame is not None:
             if size:
                 if by_height:
                     frame = resizeByHeight(frame, size)
