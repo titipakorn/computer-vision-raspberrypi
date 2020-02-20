@@ -6,6 +6,7 @@ import altusi.config as cfg
 import altusi.visualizer as vis
 from altusi import imgproc, helper
 from altusi.logger import Logger
+from altusi.videos import WebcamVideoStream
 
 from altusi.objectdetector import ObjectDetector
 
@@ -16,7 +17,7 @@ def app(video_link, video_name, show, record, flip_hor, flip_ver):
     object_detector = ObjectDetector()
 
     # initialize Video Capturer
-    cap = cv.VideoCapture(video_link)
+    cap = WebcamVideoStream(src=video_link).start()
     (W, H), FPS = imgproc.cameraCalibrate(cap)
     LOG.info('Camera Info: ({}, {}) - {:.3f}'.format(W, H, FPS))
 
@@ -26,9 +27,9 @@ def app(video_link, video_name, show, record, flip_hor, flip_ver):
                 cv.VideoWriter_fourcc(*'XVID'), 20, (1280, 720))
 
     cnt_frm = 0
-    while cap.isOpened():
-        _, frm = cap.read()
-        if not _:
+    while True:
+        frm = cap.read()
+        if frm is None:
             LOG.info('Reached the end of Video source')
             break
         cnt_frm += 1
