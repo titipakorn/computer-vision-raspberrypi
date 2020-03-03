@@ -7,14 +7,23 @@ import altusi.visualizer as vis
 from altusi import imgproc, helper
 from altusi.logger import Logger
 from altusi.videos import WebcamVideoStream
+from altusi.misc import read_py_config
+from utils.visualization import visualize_multicam_detections
+
+from mc_tracker.mct import MultiCameraTracker
+from mc_tracker.sct import SingleCameraTracker
 
 from altusi.objectdetector import ObjectDetector
+from altusi.personembedder import PersonEmbedder
 
 LOG = Logger('app-face-detector')
 
 def app(video_link, video_name, show, record, flip_hor, flip_ver):
     # initialize Face Detection net
+    config = read_py_config('config.py')
     object_detector = ObjectDetector()
+    reid =  PersonEmbedder()
+    tracker = MultiCameraTracker(1, reid, **config)
 
     # initialize Video Capturer
     cap = WebcamVideoStream(src=video_link).start()
@@ -27,6 +36,7 @@ def app(video_link, video_name, show, record, flip_hor, flip_ver):
                 cv.VideoWriter_fourcc(*'XVID'), 20, (1280, 720))
 
     cnt_frm = 0
+    counter=0
     while True:
         frm = cap.read()
         if frm is None:
@@ -41,11 +51,13 @@ def app(video_link, video_name, show, record, flip_hor, flip_ver):
 
         _start_t = time.time()
         scores, bboxes = object_detector.getObjects(frm, def_score=0.5)
+        all_masks = [[] for _ in range(len(bboxes))]
+        tracker.process(frm, bboxes, all_masks)
+        tracked_objects = tracker.get_tracked_objects()
         _prx_t = time.time() - _start_t
-
-
+        fps = round(1 / _prx_t, 1)
         if len(bboxes):
-            frm = vis.plotBBoxes(frm, bboxes, len(bboxes) * ['person'], scores)
+            frm = visualize_multicam_detections(frm,tracked_objects, fps)
         frm = vis.plotInfo(frm, 'Raspberry Pi - FPS: {:.3f}'.format(1/_prx_t))
         frm = cv.cvtColor(np.asarray(frm), cv.COLOR_BGR2RGB)
 
@@ -58,6 +70,10 @@ def app(video_link, video_name, show, record, flip_hor, flip_ver):
             if key in [27, ord('q')]:
                 LOG.info('Interrupted by Users')
                 break
+        else:
+            if(counter%10==0):
+                print(f"IN : {SingleCameraTracker.COUNT_IN}, OUT: {SingleCameraTracker.COUNT_OUT}")
+        counter+=1
 
     if record:
         writer.release()

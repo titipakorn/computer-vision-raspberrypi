@@ -25,3 +25,6 @@ PERSON_DET_BIN = os.path.join(MODEL_DIR, 'person-detection-retail-0002-fp16.bin'
 
 PERSON_DET_XML = os.path.join(MODEL_DIR, 'person-detection-retail-0013-fp16.xml')
 PERSON_DET_BIN = os.path.join(MODEL_DIR, 'person-detection-retail-0013-fp16.bin')
+
+PERSON_REID_XML = os.path.join(MODEL_DIR, 'person-reidentification-retail-0079-fp16.xml')
+PERSON_REID_BIN = os.path.join(MODEL_DIR, 'person-reidentification-retail-0079-fp16.bin')
