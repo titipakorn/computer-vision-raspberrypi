@@ -30,7 +30,7 @@ class PersonEmbedder:
         outputs=[]
         assert len(batch) <= self.max_reqs
         for frame in batch:
-            blob = cv.dnn.blobFromImage(frame, size=(160, 64), ddepth=cv.CV_8U)
+            blob = cv.dnn.blobFromImage(frame, size=(64, 160), ddepth=cv.CV_8U)
             self.__net.setInput(blob)
             futureOutputs.append(self.__net.forwardAsync())
         while futureOutputs and futureOutputs[0].wait_for(0):
