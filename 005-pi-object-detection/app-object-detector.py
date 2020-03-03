@@ -40,8 +40,7 @@ def app(video_link, video_name, show, record, flip_hor, flip_ver):
     while True:
         frm = cap.read()
         if frm is None:
-            LOG.info('Reached the end of Video source')
-            break
+            continue
         cnt_frm += 1
 
         if flip_ver: frm = cv.flip(frm, 0)
@@ -51,8 +50,7 @@ def app(video_link, video_name, show, record, flip_hor, flip_ver):
 
         _start_t = time.time()
         scores, bboxes = object_detector.getObjects(frm, def_score=0.5)
-        all_masks = [[] for _ in range(len(bboxes))]
-        tracker.process(frm, bboxes, all_masks)
+        tracker.process([frm], [bboxes], [[]])
         tracked_objects = tracker.get_tracked_objects()
         _prx_t = time.time() - _start_t
         fps = round(1 / _prx_t, 1)
