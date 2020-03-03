@@ -13,7 +13,7 @@
 
 import cv2 as cv
 import numpy as np
-from utils.misc import COLOR_PALETTE
+from altusi.misc import COLOR_PALETTE
 from mc_tracker.sct import SingleCameraTracker
 
 
