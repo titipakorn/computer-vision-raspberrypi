@@ -15,14 +15,16 @@ from mc_tracker.sct import SingleCameraTracker
 
 from altusi.objectdetector import ObjectDetector
 from altusi.personembedder import PersonEmbedder
+from openvino.inference_engine import IECore 
 
 LOG = Logger('app-face-detector')
 
 def app(video_link, video_name, show, record, flip_hor, flip_ver):
     # initialize Face Detection net
+    ie = IECore()
     config = read_py_config('config.py')
     object_detector = ObjectDetector()
-    reid =  PersonEmbedder()
+    reid =  PersonEmbedder(ie)
     tracker = MultiCameraTracker(1, reid, **config)
 
     # initialize Video Capturer

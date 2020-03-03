@@ -7,7 +7,6 @@ Face Embedding computation class
 
 import numpy as np
 import cv2 as cv
-from openvino.inference_engine import IECore 
 
 from altusi.ie_tools import load_ie_model
 
@@ -17,14 +16,13 @@ import altusi.config as cfg
 class PersonEmbedder:
     """Face embedder class"""
 
-    def __init__(self, 
+    def __init__(self, ie,
             xml_path=cfg.PERSON_REID_XML,max_reqs=100):
         """Initialize Face embedder object"""
-        self.ie = IECore()
         #self.__net = cv.dnn.readNet(xml_path, bin_path)
         self.max_reqs=max_reqs
         #self.__net.setPreferableTarget(cv.dnn.DNN_TARGET_MYRIAD)
-        self.net = load_ie_model(self.ie, xml_path, 'MYRIAD', None, num_reqs=self.max_reqs)
+        self.net = load_ie_model(ie, xml_path, 'MYRIAD', None, num_reqs=self.max_reqs)
 
 
     def forward(self, batch):
