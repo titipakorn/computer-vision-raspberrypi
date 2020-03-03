@@ -20,7 +20,7 @@ import numpy as np
 from scipy.optimize import linear_sum_assignment
 from scipy.spatial.distance import cosine, cdist
 
-from utils.misc import none_to_zero
+from altusi.misc import none_to_zero
 from shapely.geometry import Polygon, Point
 
 THE_BIGGEST_DISTANCE = 10.
