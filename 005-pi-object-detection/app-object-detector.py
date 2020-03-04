@@ -7,6 +7,7 @@ import altusi.visualizer as vis
 from altusi import imgproc, helper
 from altusi.logger import Logger
 from altusi.videos import WebcamVideoStream
+from altusi.video import MulticamCapture
 from altusi.misc import read_py_config
 from altusi.visualization import visualize_multicam_detections
 
