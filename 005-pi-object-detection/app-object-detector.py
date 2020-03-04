@@ -55,7 +55,7 @@ def app(video_link, video_name, show, record, flip_hor, flip_ver):
         _prx_t = time.time() - _start_t
         fps = round(1 / _prx_t, 1)
         if len(bboxes):
-            frm = visualize_multicam_detections(frm,tracked_objects, fps)
+            frm = visualize_multicam_detections([frm],tracked_objects, fps)
         frm = vis.plotInfo(frm, 'Raspberry Pi - FPS: {:.3f}'.format(1/_prx_t))
         frm = cv.cvtColor(np.asarray(frm), cv.COLOR_BGR2RGB)
 
