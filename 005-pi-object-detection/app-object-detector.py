@@ -1,6 +1,7 @@
 import time
 import numpy as np
 import cv2 as cv
+import queue
 
 import altusi.config as cfg
 from threading import Thread
