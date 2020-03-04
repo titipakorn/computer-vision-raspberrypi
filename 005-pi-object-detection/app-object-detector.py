@@ -23,7 +23,7 @@ def app(video_link, video_name, show, record, flip_hor, flip_ver):
     # initialize Face Detection net
     ie = IECore()
     config = read_py_config('config.py')
-    object_detector = ObjectDetector()
+    object_detector = ObjectDetector(ie)
     reid =  PersonEmbedder(ie)
     tracker = MultiCameraTracker(1, reid, **config)
 

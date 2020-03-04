@@ -414,7 +414,6 @@ class SingleCameraTracker:
         return intersecion / m if m > 0 else 0
 
     def _get_embeddings(self, frame, detections, mask=None):
-        rois = []
         embeddings = []
         for i in range(len(detections)):
             rect = detections[i]
@@ -423,12 +422,8 @@ class SingleCameraTracker:
             if mask and len(mask[i]) > 0:
                 crop = cv2.bitwise_and(crop, crop, mask=mask[i])
             if left != right and top != bottom:
-                rois.append(crop)
-
-        if rois:
-            embeddings = self.reid_model.forward(rois)
-            assert len(rois) == len(embeddings)
-
+                embeddings.append(self.reid_model.forward(crop))
+                
         return embeddings
 
     def _merge_clustered_features(self, clusters1, clusters2, features1, features2):
