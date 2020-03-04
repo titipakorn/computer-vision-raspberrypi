@@ -13,8 +13,11 @@ from altusi.visualization import visualize_multicam_detections
 from mc_tracker.mct import MultiCameraTracker
 from mc_tracker.sct import SingleCameraTracker
 
-from altusi.objectdetector import ObjectDetector
-from altusi.personembedder import PersonEmbedder
+#from altusi.objectdetector import ObjectDetector
+#from altusi.personembedder import PersonEmbedder
+
+from altusi.perseon_reid import PersonREID
+from altusi.person_detector import ObjectDetector
 
 LOG = Logger('app-face-detector')
 
@@ -22,7 +25,8 @@ def app(video_link, video_name, show, record, flip_hor, flip_ver):
     # initialize Face Detection net
     config = read_py_config('config.py')
     object_detector = ObjectDetector()
-    reid =  PersonEmbedder()
+    plugin = object_detector.getPlugin()
+    reid =  PersonREID(plugin=plugin)
     tracker = MultiCameraTracker(1, reid, **config)
 
     # initialize Video Capturer
