@@ -104,10 +104,8 @@ def app(video_link, video_name, show, record, flip_hor, flip_ver):
                 print(f"IN : {SingleCameraTracker.COUNT_IN}, OUT: {SingleCameraTracker.COUNT_OUT}")
         counter+=1
 
-    if record:
-        writer.release()
-    cap.release()
-    cv.destroyAllWindows()
+    thread_body.process = False
+    frames_thread.join()
 
 
 def main(args):
