@@ -51,7 +51,7 @@ def app(video_link, video_name, show, record, flip_hor, flip_ver):
     cap = WebcamVideoStream(src=video_link).start()
     (W, H), FPS = imgproc.cameraCalibrate(cap)
     LOG.info('Camera Info: ({}, {}) - {:.3f}'.format(W, H, FPS))
-    tracker = MultiCameraTracker(cap.get_num_sources(), reid, **config)
+    tracker = MultiCameraTracker(1, reid, **config)
     
     if record:
         time_str = time.strftime(cfg.TIME_FM)
