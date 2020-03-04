@@ -3,6 +3,7 @@ import numpy as np
 import cv2 as cv
 
 import altusi.config as cfg
+from threading import Thread
 import altusi.visualizer as vis
 from altusi import imgproc, helper
 from altusi.logger import Logger
@@ -50,7 +51,7 @@ def app(video_link, video_name, show, record, flip_hor, flip_ver):
     # (W, H), FPS = imgproc.cameraCalibrate(cap)
     # LOG.info('Camera Info: ({}, {}) - {:.3f}'.format(W, H, FPS))
     tracker = MultiCameraTracker(cap.get_num_sources(), reid, **config)
-    thread_body = FramesThreadBody(capture, max_queue_length=len(capture.captures) * 2)
+    thread_body = FramesThreadBody(cap, max_queue_length=len(cap.captures) * 2)
     frames_thread = Thread(target=thread_body)
     frames_thread.start()
     
