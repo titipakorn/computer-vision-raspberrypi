@@ -39,7 +39,7 @@ class MulticamCapture:
             for video_path in sources:
                 log.info('Opening file {}'.format(video_path))
                 cap = cv.VideoCapture(video_path)
-                #assert cap.isOpened()
+                assert cap.isOpened()
                 self.captures.append(cap)
 
     def get_frames(self):
