@@ -47,14 +47,11 @@ def app(video_link, video_name, show, record, flip_hor, flip_ver):
     reid =  PersonEmbedder()
 
     # initialize Video Capturer
-    cap = MulticamCapture(video_link)
-    #cap = WebcamVideoStream(src=video_link).start()
-    # (W, H), FPS = imgproc.cameraCalibrate(cap)
-    # LOG.info('Camera Info: ({}, {}) - {:.3f}'.format(W, H, FPS))
+    #cap = MulticamCapture(video_link)
+    cap = WebcamVideoStream(src=video_link).start()
+    (W, H), FPS = imgproc.cameraCalibrate(cap)
+    LOG.info('Camera Info: ({}, {}) - {:.3f}'.format(W, H, FPS))
     tracker = MultiCameraTracker(cap.get_num_sources(), reid, **config)
-    thread_body = FramesThreadBody(cap, max_queue_length=len(cap.captures) * 2)
-    frames_thread = Thread(target=thread_body)
-    frames_thread.start()
     
     if record:
         time_str = time.strftime(cfg.TIME_FM)
@@ -63,11 +60,8 @@ def app(video_link, video_name, show, record, flip_hor, flip_ver):
 
     cnt_frm = 0
     counter=0
-    while thread_body.process:
-        try:
-            frm = thread_body.frames_queue.get_nowait()
-        except queue.Empty:
-            frm = None
+    while True:
+        frm = cap.read()
         if frm is None:
             continue
         cnt_frm += 1
@@ -76,17 +70,17 @@ def app(video_link, video_name, show, record, flip_hor, flip_ver):
         # if flip_hor: frm = cv.flip(frm, 1)
         _start_t = time.time()
         all_detections=[]
-        for f in frm:
-            f = imgproc.resizeByHeight(f, 640)
-            _, bboxes = object_detector.getObjects(f, def_score=0.5)
-            all_detections.append(bboxes)
+        
+        frm = imgproc.resizeByHeight(frm, 640)
+        _, bboxes = object_detector.getObjects(frm, def_score=0.5)
+        all_detections.append(bboxes)
 
-        tracker.process(frm, all_detections, [[]])
+        tracker.process([frm], all_detections, [[]])
         tracked_objects = tracker.get_tracked_objects()
         _prx_t = time.time() - _start_t
         fps = round(1 / _prx_t, 1)
         if len(bboxes):
-            frm = visualize_multicam_detections(frm,tracked_objects, fps)
+            frm = visualize_multicam_detections([frm],tracked_objects, fps)
         frm = vis.plotInfo(frm, 'Raspberry Pi - FPS: {:.3f}'.format(1/_prx_t))
         frm = cv.cvtColor(np.asarray(frm), cv.COLOR_BGR2RGB)
 
@@ -104,8 +98,10 @@ def app(video_link, video_name, show, record, flip_hor, flip_ver):
                 print(f"IN : {SingleCameraTracker.COUNT_IN}, OUT: {SingleCameraTracker.COUNT_OUT}")
         counter+=1
 
-    thread_body.process = False
-    frames_thread.join()
+    if record:
+        writer.release()
+    cap.release()
+    cv.destroyAllWindows()
 
 
 def main(args):
