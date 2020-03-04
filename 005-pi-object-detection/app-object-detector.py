@@ -45,7 +45,7 @@ def app(video_link, video_name, show, record, flip_hor, flip_ver):
     reid =  PersonEmbedder()
 
     # initialize Video Capturer
-    cap = MulticamCapture(args.i)
+    cap = MulticamCapture(video_link)
     #cap = WebcamVideoStream(src=video_link).start()
     # (W, H), FPS = imgproc.cameraCalibrate(cap)
     # LOG.info('Camera Info: ({}, {}) - {:.3f}'.format(W, H, FPS))
