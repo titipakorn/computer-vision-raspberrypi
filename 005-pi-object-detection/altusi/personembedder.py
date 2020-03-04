@@ -28,6 +28,6 @@ class PersonEmbedder:
         blob = cv.dnn.blobFromImage(person_image, size=(64, 160), ddepth=cv.CV_8U)
         self.__net.setInput(blob)
 
-        emb = self.__net.forward().reshape(256)
+        emb = self.__net.forward()
 
         return emb
